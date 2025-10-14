@@ -13,7 +13,7 @@ const WatchExploreSection: React.FC<WatchExploreSectionProps> = ({ className }) 
   return (
     <section
       className={cn(
-        'relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-black px-6 py-44 text-white sm:px-12 md:px-16',
+        'relative flex w-full items-center justify-center overflow-hidden bg-black px-6 pt-32 pb-8 text-white sm:px-12 md:px-16',
         className,
       )}
     >
