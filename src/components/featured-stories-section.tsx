@@ -1,6 +1,6 @@
-import React, { useMemo, useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FeaturedStoriesSectionProps {
@@ -9,275 +9,238 @@ interface FeaturedStoriesSectionProps {
 
 interface StoryMeta {
   id: string;
+  number: string;
   title: string;
+  subtitle: string;
   category: string;
   location: string;
-  date: string;
+  year: string;
   image: string;
-  column: 'left' | 'right';
-}
-
-interface LayoutCard extends StoryMeta {
-  offsetY: number;
-  height: number;
-  start: number;
-  end: number;
 }
 
 const STORIES: StoryMeta[] = [
   {
-    id: 'dark-mode-creativity',
-    title: 'Finding Creativity in Dark Mode',
+    id: 'dark-mode',
+    number: '01',
+    title: 'Finding Creativity',
+    subtitle: 'in Dark Mode',
     category: 'Design & Tech',
     location: 'Berlin',
-    date: 'August 13, 2025',
+    year: '2025',
     image:
       'https://images.pexels.com/photos/4065627/pexels-photo-4065627.jpeg?auto=compress&cs=tinysrgb&w=1600&h=1000&dpr=2',
-    column: 'left',
   },
   {
-    id: 'lisbon-coffee-shops',
-    title: '5 Coffee Shops in Lisbon That Spark Creativity',
-    category: 'Design & Tech',
+    id: 'lisbon-coffee',
+    number: '02',
+    title: '5 Coffee Shops',
+    subtitle: 'in Lisbon',
+    category: 'Lifestyle',
     location: 'Lisbon',
-    date: 'July 29, 2025',
+    year: '2025',
     image:
       'https://images.pexels.com/photos/3184302/pexels-photo-3184302.jpeg?auto=compress&cs=tinysrgb&w=1600&h=1000&dpr=2',
-    column: 'right',
   },
   {
-    id: 'copenhagen-light',
-    title: 'Lighting Concepts from Copenhagen Studios',
-    category: 'Design & Tech',
+    id: 'copenhagen',
+    number: '03',
+    title: 'Copenhagen',
+    subtitle: 'Light Studies',
+    category: 'Architecture',
     location: 'Copenhagen',
-    date: 'June 11, 2025',
+    year: '2025',
     image:
-      'https://images.pexels.com/photos/4475920/pexels-photo-4475920.jpeg?auto=compress&cs=tinysrgb&w=1600&h=1000&dpr=2',
-    column: 'left',
+      'https://images.pexels.com/photos/416024/pexels-photo-416024.jpeg?auto=compress&cs=tinysrgb&w=1600&h=1000&dpr=2',
   },
   {
-    id: 'tokyo-workflows',
-    title: 'Tokyo Workflows for Remote Creators',
-    category: 'Design & Tech',
+    id: 'tokyo',
+    number: '04',
+    title: 'Tokyo Workflows',
+    subtitle: 'for Creators',
+    category: 'Productivity',
     location: 'Tokyo',
-    date: 'May 24, 2025',
+    year: '2025',
     image:
       'https://images.pexels.com/photos/3184454/pexels-photo-3184454.jpeg?auto=compress&cs=tinysrgb&w=1600&h=1000&dpr=2',
-    column: 'right',
   },
 ];
 
-const COLUMN_GAP_PX = 80; // gap-20
-const STEP_GAP_PX = 72;
-const DEFAULT_WIDTH = 640;
-
-const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
-
-const FeaturedStoryCard = React.forwardRef<HTMLElement, {
-  card: LayoutCard;
-  smoothProgress: MotionValue<number>;
-  columnWidth: number;
-}>(({ card, smoothProgress, columnWidth }) => {
-  const progress = useTransform(smoothProgress, (value) => {
-    const normalized = (value - card.start) / Math.max(0.001, card.end - card.start);
-    return clamp01(normalized);
-  });
-
-  const translateY = useTransform(progress, [0, 1], [220, 0]);
-  const scaleX = useTransform(progress, [0, 0.25, 1], [0.22, 0.55, 1]);
-  const scaleY = useTransform(progress, [0, 0.25, 1], [0.18, 0.6, 1]);
-  const opacity = useTransform(progress, [0, 0.15, 1], [0, 0.5, 1]);
-  const radius = useTransform(progress, [0, 1], ['120px', '28px']);
-  const shadow = useTransform(
-    progress,
-    [0, 1],
-    ['0 48px 160px -90px rgba(0,0,0,0.28)', '0 70px 210px -80px rgba(0,0,0,0.82)'],
-  );
+const StoryCard: React.FC<{ story: StoryMeta; index: number }> = ({ story, index }) => {
+  const isEven = index % 2 === 0;
 
   return (
     <motion.article
-      className={cn(
-        'absolute aspect-[4/3] overflow-hidden bg-neutral-900',
-        card.column === 'left' ? 'left-0' : 'right-0',
-      )}
-      style={{
-        top: card.offsetY,
-        width: columnWidth,
-        translateY,
-        scaleX,
-        scaleY,
-        opacity,
-        borderRadius: radius,
-        boxShadow: shadow,
-        transformOrigin: 'center top',
-      }}
+      className="group relative flex h-[500px] overflow-hidden bg-black"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.8, delay: index * 0.15, ease: [0.23, 1, 0.32, 1] }}
     >
-      <img
-        src={card.image}
-        alt={card.title}
-        className="absolute inset-0 h-full w-full object-cover"
-        loading="lazy"
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/18 via-black/35 to-black/78" />
+      {/* Background Image */}
+      <div
+        className={cn(
+          "relative overflow-hidden",
+          isEven ? "w-[65%]" : "order-2 w-[65%]"
+        )}
+      >
+        <motion.div
+          className="absolute inset-0"
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+        >
+          <img
+            src={story.image}
+            alt={story.title}
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-black/30" />
+        </motion.div>
 
-      <div className="absolute bottom-10 left-10 right-10 flex flex-col gap-5">
-        <span className="inline-flex w-fit items-center rounded-full bg-white/12 px-4 py-1 text-xs font-semibold uppercase tracking-[0.4em] text-white/90">
-          {card.category}
-        </span>
-        <h3 className="text-3xl font-semibold tracking-[0.01em] md:text-[2.4rem] lg:text-[2.6rem]">
-          {card.title}
-        </h3>
-        <div className="flex items-center gap-4 text-xs uppercase tracking-[0.35em] text-white/70">
-          <span className="flex items-center gap-2">
-            <span className="block h-1 w-1 rounded-full bg-white/60" />
-            {card.location}
-          </span>
-          <span className="flex items-center gap-2">
-            <span className="block h-1 w-1 rounded-full bg-white/60" />
-            {card.date}
-          </span>
+        {/* Overlay Number */}
+        <motion.div
+          className="absolute left-12 top-12 z-10 text-[10rem] font-extrabold leading-none text-white/20"
+          initial={{ x: -50, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          transition={{ duration: 1, delay: index * 0.15 + 0.2 }}
+        >
+          {story.number}
+        </motion.div>
+      </div>
+
+      {/* Content Panel */}
+      <div
+        className={cn(
+          "relative flex w-[35%] flex-col justify-center bg-black p-12",
+          isEven ? "" : "order-1"
+        )}
+      >
+        <div className="space-y-6">
+          {/* Category */}
+          <motion.span
+            className="block text-xs font-medium uppercase tracking-[0.4em] text-white/40"
+            initial={{ y: 20, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: index * 0.15 + 0.3 }}
+          >
+            {story.category}
+          </motion.span>
+
+          {/* Title */}
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: index * 0.15 + 0.4 }}
+          >
+            <h3 className="text-4xl font-bold leading-tight tracking-tight text-white">
+              {story.title}
+            </h3>
+            <h3 className="text-4xl font-bold leading-tight tracking-tight text-white/60">
+              {story.subtitle}
+            </h3>
+          </motion.div>
+
+          {/* Metadata */}
+          <motion.div
+            className="flex items-center gap-6 pt-4 text-xs uppercase tracking-[0.3em] text-white/40"
+            initial={{ y: 20, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: index * 0.15 + 0.5 }}
+          >
+            <span>{story.location}</span>
+            <span className="h-3 w-px bg-white/20" />
+            <span>{story.year}</span>
+          </motion.div>
+
+          {/* Hover Arrow */}
+          <motion.div
+            className="pt-8 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            whileHover={{ x: 5 }}
+          >
+            <ArrowUpRight className="h-6 w-6 text-white/60" />
+          </motion.div>
         </div>
       </div>
     </motion.article>
   );
-});
+};
 
 export const FeaturedStoriesSection: React.FC<FeaturedStoriesSectionProps> = ({ className }) => {
-  const sectionRef = useRef<HTMLDivElement | null>(null);
-  const gridRef = useRef<HTMLDivElement | null>(null);
-  const [gridWidth, setGridWidth] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    const node = gridRef.current;
-    if (!node) return;
-
-    const observer = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (!entry) return;
-      setGridWidth(entry.contentRect.width);
-    });
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start 55%', 'end 15%'] });
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 170, damping: 28, mass: 0.55 });
-
-  const columnMetrics = useMemo(() => {
-    if (gridWidth === 0) {
-      return {
-        leftWidth: DEFAULT_WIDTH,
-        rightWidth: DEFAULT_WIDTH * 0.92,
-        leftHeight: DEFAULT_WIDTH * 0.75,
-        rightHeight: DEFAULT_WIDTH * 0.75 * 0.92,
-      };
-    }
-
-    const availableWidth = Math.max(0, gridWidth - COLUMN_GAP_PX);
-    const totalRatio = 1.05 + 0.95;
-    const leftWidth = (availableWidth * 1.05) / totalRatio;
-    const rightWidth = (availableWidth * 0.95) / totalRatio;
-    return {
-      leftWidth,
-      rightWidth,
-      leftHeight: leftWidth * 0.75,
-      rightHeight: rightWidth * 0.75,
-    };
-  }, [gridWidth]);
-
-  const cardsWithLayout = useMemo(() => {
-    let cursor = 0;
-    const layouts: LayoutCard[] = [];
-
-    STORIES.forEach((story) => {
-      const height = story.column === 'left' ? columnMetrics.leftHeight : columnMetrics.rightHeight;
-      layouts.push({
-        ...story,
-        offsetY: cursor,
-        height,
-        start: 0,
-        end: 0,
-      });
-      cursor += height + STEP_GAP_PX;
-    });
-
-    const totalHeight = cursor - STEP_GAP_PX;
-    const viewHeight = typeof window !== 'undefined' ? window.innerHeight : 900;
-    const appearThreshold = viewHeight * 0.78;
-    const settleThreshold = viewHeight * 0.32;
-    const scrollRange = totalHeight + viewHeight;
-
-    return layouts.map((card) => {
-      const startRaw = (card.offsetY - appearThreshold) / scrollRange;
-      const endRaw = (card.offsetY + card.height - settleThreshold) / scrollRange;
-      const start = clamp01(startRaw);
-      const end = clamp01(Math.max(start + 0.1, endRaw));
-      return { ...card, start, end };
-    });
-  }, [columnMetrics.leftHeight, columnMetrics.rightHeight]);
-
-  const leftCards = cardsWithLayout.filter((card) => card.column === 'left');
-  const rightCards = cardsWithLayout.filter((card) => card.column === 'right');
-
-  const leftColumnHeight = (leftCards.at(-1)?.offsetY ?? 0) + (leftCards.at(-1)?.height ?? DEFAULT_WIDTH * 0.75) + 200;
-  const rightColumnHeight = (rightCards.at(-1)?.offsetY ?? 0) + (rightCards.at(-1)?.height ?? DEFAULT_WIDTH * 0.65) + 200;
-
-  const secondCardStart = rightCards[0]?.start ?? 0.38;
-  const arrowProgress = useTransform(smoothProgress, (value) => {
-    const normalized = (value - secondCardStart) / 0.12;
-    return clamp01(normalized);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
   });
-  const arrowOpacity = useTransform(arrowProgress, [0, 1], [0, 1]);
-  const arrowScale = useTransform(arrowProgress, [0, 1], [0.85, 1.08]);
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
 
   return (
     <section
       ref={sectionRef}
       className={cn(
-        'relative -mt-10 flex w-full justify-center overflow-hidden bg-black px-6 pt-12 pb-48 text-white sm:px-12 md:px-16',
+        'relative overflow-hidden bg-black py-32',
         className,
       )}
     >
-      <div className="pointer-events-none absolute inset-y-0 left-1/4 hidden w-px bg-white/5 lg:block" />
-      <div className="pointer-events-none absolute inset-y-0 right-1/4 hidden w-px bg-white/5 lg:block" />
-
-      <div
-        ref={gridRef}
-        className="relative z-10 grid w-full max-w-[1380px] grid-cols-1 gap-24 lg:grid-cols-[1.05fr_0.95fr] lg:items-start"
+      {/* Parallax Background */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 opacity-30"
+        style={{ y: backgroundY }}
       >
-        <div className="relative" style={{ height: leftColumnHeight }}>
-          {leftCards.map((card) => (
-            <FeaturedStoryCard
-              key={card.id}
-              card={card}
-              smoothProgress={smoothProgress}
-              columnWidth={columnMetrics.leftWidth}
-            />
+        <div className="absolute left-1/4 top-0 h-[600px] w-[600px] rounded-full bg-blue-500/10 blur-[200px]" />
+        <div className="absolute bottom-0 right-1/4 h-[600px] w-[600px] rounded-full bg-purple-500/10 blur-[200px]" />
+      </motion.div>
+
+      <div className="relative z-10">
+        {/* Section Header */}
+        <motion.div
+          className="mb-32 px-6 text-center sm:px-12 md:px-16"
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: [0.23, 1, 0.32, 1] }}
+        >
+          <span className="mb-8 block text-xs font-medium uppercase tracking-[0.5em] text-white/40">
+            Selected Works
+          </span>
+          <h2 className="mx-auto max-w-[900px] text-[clamp(3rem,8vw,7rem)] font-extrabold uppercase leading-[0.85] tracking-[0.02em] text-white">
+            Featured
+            <span className="block text-white/30">Stories</span>
+          </h2>
+        </motion.div>
+
+        {/* Story Cards - Full Width */}
+        <div className="space-y-px">
+          {STORIES.map((story, index) => (
+            <StoryCard key={story.id} story={story} index={index} />
           ))}
         </div>
 
-        <div className="relative flex w-full flex-col items-center gap-20 lg:items-end">
-          <motion.button
-            className="relative flex h-18 w-18 items-center justify-center rounded-full bg-white/90 text-black shadow-[0_35px_80px_-45px_rgba(255,255,255,0.7)]"
-            style={{ opacity: arrowOpacity, scale: arrowScale }}
-            whileHover={{ scale: 1.1 }}
-            aria-label="Browse more stories"
-          >
-            <ArrowRight className="h-5 w-5" />
-          </motion.button>
-
-          <div className="relative w-full" style={{ height: rightColumnHeight }}>
-            {rightCards.map((card) => (
-              <FeaturedStoryCard
-                key={card.id}
-                card={card}
-                smoothProgress={smoothProgress}
-                columnWidth={columnMetrics.rightWidth}
-              />
-            ))}
+        {/* Bottom Section */}
+        <motion.div
+          className="mt-32 flex items-center justify-between px-6 sm:px-12 md:px-16"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <div className="flex items-center gap-8">
+            <span className="text-xs uppercase tracking-[0.4em] text-white/40">
+              More Stories
+            </span>
+            <span className="h-px w-32 bg-white/20" />
           </div>
-        </div>
+
+          <motion.button
+            className="group flex items-center gap-4 text-sm font-medium uppercase tracking-[0.3em] text-white/60 transition-colors hover:text-white"
+            whileHover={{ x: 10 }}
+            transition={{ duration: 0.3 }}
+          >
+            <span>View All</span>
+            <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+          </motion.button>
+        </motion.div>
       </div>
     </section>
   );
