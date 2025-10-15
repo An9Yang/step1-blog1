@@ -291,8 +291,6 @@ export const FeaturedStoriesSection: React.FC<FeaturedStoriesSectionProps> = ({ 
   });
 
   const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
-  const titleScale = useTransform(scrollYProgress, [0, 0.3], [0.85, 1]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
 
   return (
     <section
@@ -337,69 +335,6 @@ export const FeaturedStoriesSection: React.FC<FeaturedStoriesSectionProps> = ({ 
       </motion.div>
 
       <div className="relative z-10">
-        {/* Section Header with Scale Animation */}
-        <motion.div
-          className="mb-32 px-6 text-center sm:px-12 md:px-16"
-          style={{
-            scale: titleScale,
-            opacity: titleOpacity
-          }}
-        >
-          {/* Animated Line */}
-          <motion.div
-            className="mb-8 flex items-center justify-center gap-6"
-            initial={{ width: 0 }}
-            whileInView={{ width: '100%' }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: [0.23, 1, 0.32, 1] }}
-          >
-            <motion.span
-              className="h-px flex-1 bg-white/20"
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            />
-            <motion.span
-              className="text-xs font-medium uppercase tracking-[0.5em] text-white/40"
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              Selected Works
-            </motion.span>
-            <motion.span
-              className="h-px flex-1 bg-white/20"
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            />
-          </motion.div>
-
-          {/* Animated Title */}
-          <motion.h2
-            className="mx-auto max-w-[900px] text-[clamp(3rem,8vw,7rem)] font-extrabold uppercase leading-[0.85] tracking-[0.02em]"
-          >
-            <motion.span
-              className="block text-white"
-              initial={{ y: 50, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.5, ease: [0.23, 1, 0.32, 1] }}
-            >
-              Featured
-            </motion.span>
-            <motion.span
-              className="block text-white/30"
-              initial={{ y: 50, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.6, ease: [0.23, 1, 0.32, 1] }}
-            >
-              Stories
-            </motion.span>
-          </motion.h2>
-        </motion.div>
-
         {/* Story Cards with Stagger */}
         <div className="space-y-px">
           {STORIES.map((story, index) => (
