@@ -9,6 +9,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 interface NavigationProps {
@@ -16,11 +17,11 @@ interface NavigationProps {
 }
 
 const NAV_ITEMS = [
-  { label: 'ABOUT', href: '#about', position: 'start', colStart: 'col-start-1' },
-  { label: 'BLOGS', href: '#blogs', position: 'mid-left', colStart: 'col-start-3' },
+  { label: 'ABOUT', href: '/about', position: 'start', colStart: 'col-start-1' },
+  { label: 'BLOGS', href: '/blogs', position: 'mid-left', colStart: 'col-start-3' },
   { label: 'ALEC', href: '/', position: 'center', colStart: 'col-start-5' },
-  { label: 'VLOGS', href: '#vlogs', position: 'mid-right', colStart: 'col-start-7' },
-  { label: 'CONTACT', href: '#contact', position: 'end', colStart: 'col-start-9' },
+  { label: 'VLOGS', href: '/vlogs', position: 'mid-right', colStart: 'col-start-7' },
+  { label: 'CONTACT', href: '/contact', position: 'end', colStart: 'col-start-9' },
 ] as const;
 
 const positionClassMap: Record<(typeof NAV_ITEMS)[number]['position'], string> = {
@@ -56,23 +57,29 @@ export const Navigation: React.FC<NavigationProps> = ({ className = '' }) => {
               transition={{ duration: 0.6, delay: baseDelay * index }}
             >
               {isCenter ? (
-                <motion.a
-                  href={item.href}
-                  className="text-white text-base font-extrabold uppercase tracking-[0.5em]"
+                <motion.div
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
                 >
-                  {item.label}
-                </motion.a>
+                  <Link
+                    to={item.href}
+                    className="text-white text-base font-extrabold uppercase tracking-[0.5em]"
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
               ) : (
-                <motion.a
-                  href={item.href}
-                  className="text-white/85 hover:text-white text-sm font-semibold uppercase tracking-[0.55em] transition-colors duration-300"
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                 >
-                  {item.label}
-                </motion.a>
+                  <Link
+                    to={item.href}
+                    className="text-white/85 hover:text-white text-sm font-semibold uppercase tracking-[0.55em] transition-colors duration-300"
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
               )}
             </motion.div>
           );
