@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface BlogsGridSectionProps {
@@ -145,8 +145,15 @@ const STAIR_LAYOUT = [
 ];
 
 export const BlogsGridSection: React.FC<BlogsGridSectionProps> = ({ className }) => {
+  const containerRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end start'],
+  });
+
   return (
-    <section className={cn('relative bg-black py-24 pb-32', className)}>
+    <section ref={containerRef} className={cn('relative bg-black pt-64 pb-64', className)}>
       <div className="relative w-full">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black via-black to-black/95" />
 
@@ -157,7 +164,35 @@ export const BlogsGridSection: React.FC<BlogsGridSectionProps> = ({ className })
           <div className="relative w-full max-w-[1500px] mx-auto px-8 pt-16" style={{ minHeight: '1400px' }}>
             {GRID_POSTS.slice(0, STAIR_LAYOUT.length).map((post, index) => {
               const layout = STAIR_LAYOUT[index];
-              const delay = layout.group * 0.3 + layout.indexInGroup * 0.1;
+
+              // Calculate animation range for each card
+              const baseStart = 0.2 + (layout.group * 0.15) + (layout.indexInGroup * 0.05);
+              const animationEnd = baseStart + 0.15;
+
+              // Smooth animations based on scroll progress
+              const cardOpacity = useTransform(
+                scrollYProgress,
+                [baseStart - 0.1, baseStart, animationEnd, animationEnd + 0.3],
+                [0, 1, 1, 0]
+              );
+
+              const cardX = useTransform(
+                scrollYProgress,
+                [baseStart - 0.05, baseStart, animationEnd],
+                [layout.spawnOffsetX, 0, 0]
+              );
+
+              const cardY = useTransform(
+                scrollYProgress,
+                [baseStart - 0.05, baseStart, animationEnd],
+                [layout.spawnOffsetY, 0, 0]
+              );
+
+              const cardScale = useTransform(
+                scrollYProgress,
+                [baseStart - 0.05, baseStart, animationEnd],
+                [0.94, 1, 1]
+              );
 
               return (
                 <motion.div
@@ -167,24 +202,10 @@ export const BlogsGridSection: React.FC<BlogsGridSectionProps> = ({ className })
                     left: `${layout.left}%`,
                     top: `${layout.top * 10}px`,
                     width: `${layout.width}%`,
-                  }}
-                  initial={{
-                    opacity: 0,
-                    x: layout.spawnOffsetX,
-                    y: layout.spawnOffsetY,
-                    scale: 0.94
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    x: 0,
-                    y: 0,
-                    scale: 1
-                  }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{
-                    duration: 1,
-                    delay,
-                    ease: [0.22, 1, 0.36, 1],
+                    opacity: cardOpacity,
+                    x: cardX,
+                    y: cardY,
+                    scale: cardScale,
                   }}
                 >
                   <div
