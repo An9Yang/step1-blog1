@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface BlogsGridSectionProps {
@@ -91,8 +91,6 @@ const STAIR_LAYOUT = [
     indexInGroup: 0,
     spawnOffsetY: 200,
     spawnOffsetX: -120,
-    parallaxOffsetY: -55,
-    parallaxOffsetX: -12,
   },
   {
     width: 25,
@@ -103,8 +101,6 @@ const STAIR_LAYOUT = [
     indexInGroup: 1,
     spawnOffsetY: 215,
     spawnOffsetX: -10,
-    parallaxOffsetY: -70,
-    parallaxOffsetX: -6,
   },
   {
     width: 25,
@@ -115,8 +111,6 @@ const STAIR_LAYOUT = [
     indexInGroup: 2,
     spawnOffsetY: 230,
     spawnOffsetX: 115,
-    parallaxOffsetY: -65,
-    parallaxOffsetX: 10,
   },
   {
     width: 25,
@@ -127,8 +121,6 @@ const STAIR_LAYOUT = [
     indexInGroup: 0,
     spawnOffsetY: 220,
     spawnOffsetX: -110,
-    parallaxOffsetY: -70,
-    parallaxOffsetX: -10,
   },
   {
     width: 25,
@@ -139,8 +131,6 @@ const STAIR_LAYOUT = [
     indexInGroup: 1,
     spawnOffsetY: 235,
     spawnOffsetX: 15,
-    parallaxOffsetY: -82,
-    parallaxOffsetX: -4,
   },
   {
     width: 25,
@@ -151,69 +141,23 @@ const STAIR_LAYOUT = [
     indexInGroup: 2,
     spawnOffsetY: 250,
     spawnOffsetX: 130,
-    parallaxOffsetY: -75,
-    parallaxOffsetX: 6,
   },
 ];
 
 export const BlogsGridSection: React.FC<BlogsGridSectionProps> = ({ className }) => {
-  const containerRef = useRef<HTMLElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end start'],
-  });
-
   return (
-    <section
-      ref={containerRef}
-      className={cn('relative bg-black', className)}
-      style={{ height: '700vh' }}
-    >
-      <div className="sticky top-0 h-screen overflow-hidden">
+    <section className={cn('relative bg-black py-24 pb-32', className)}>
+      <div className="relative w-full">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black via-black to-black/95" />
 
-        <div className="relative hidden h-full w-full lg:block">
+        <div className="relative hidden w-full lg:block">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.02] to-transparent" />
-          <div className="absolute inset-x-0 bottom-[-30%] h-[65%] rounded-[50%] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.14),rgba(0,0,0,0.08)_55%,rgba(0,0,0,0)_80%)] blur-3xl opacity-30" />
+          <div className="absolute inset-x-0 top-0 h-[800px] rounded-[50%] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.14),rgba(0,0,0,0.08)_55%,rgba(0,0,0,0)_80%)] blur-3xl opacity-30" />
 
-          <div className="relative h-full w-full max-w-[1500px] mx-auto px-8 pt-16 pb-72">
+          <div className="relative w-full max-w-[1500px] mx-auto px-8 pt-16" style={{ minHeight: '1400px' }}>
             {GRID_POSTS.slice(0, STAIR_LAYOUT.length).map((post, index) => {
               const layout = STAIR_LAYOUT[index];
-
-              const stageOffsets = [0.14, 0.46];
-              const baseOffset = stageOffsets[layout.group] ?? stageOffsets[stageOffsets.length - 1];
-              const stagger = 0.075;
-              const settlePadding = 0.08;
-
-              const appearStart = Math.min(baseOffset + layout.indexInGroup * stagger, 0.82);
-              const appearEnd = Math.min(appearStart + 0.15, 0.9);
-              const parallaxStart = Math.min(appearEnd + settlePadding, 0.96);
-
-              const timeline = [0, appearStart, appearEnd, parallaxStart, 1];
-
-              const translateY = useTransform(scrollYProgress, timeline, [
-                layout.spawnOffsetY ?? 240,
-                layout.spawnOffsetY ?? 240,
-                0,
-                layout.parallaxOffsetY ?? -100,
-                layout.parallaxOffsetY ?? -100,
-              ]);
-
-              const translateX = useTransform(scrollYProgress, timeline, [
-                layout.spawnOffsetX ?? 0,
-                layout.spawnOffsetX ?? 0,
-                0,
-                layout.parallaxOffsetX ?? 0,
-                layout.parallaxOffsetX ?? 0,
-              ]);
-
-              const scale = useTransform(scrollYProgress, [0, appearStart, appearEnd], [0.94, 0.94, 1]);
-              const opacity = useTransform(
-                scrollYProgress,
-                [0, appearStart, appearStart + 0.02, appearEnd],
-                [0, 0, 1, 1]
-              );
+              const delay = layout.group * 0.3 + layout.indexInGroup * 0.1;
 
               return (
                 <motion.div
@@ -221,13 +165,26 @@ export const BlogsGridSection: React.FC<BlogsGridSectionProps> = ({ className })
                   className="absolute group"
                   style={{
                     left: `${layout.left}%`,
-                    top: `${layout.top}%`,
+                    top: `${layout.top * 10}px`,
                     width: `${layout.width}%`,
-                    translateX,
-                    translateY,
-                    scale,
-                    opacity,
-                    zIndex: 100 - index,
+                  }}
+                  initial={{
+                    opacity: 0,
+                    x: layout.spawnOffsetX,
+                    y: layout.spawnOffsetY,
+                    scale: 0.94
+                  }}
+                  whileInView={{
+                    opacity: 1,
+                    x: 0,
+                    y: 0,
+                    scale: 1
+                  }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{
+                    duration: 1,
+                    delay,
+                    ease: [0.22, 1, 0.36, 1],
                   }}
                 >
                   <div
