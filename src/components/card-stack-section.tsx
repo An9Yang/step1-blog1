@@ -119,26 +119,26 @@ export const CardStackSection: React.FC<CardStackSectionProps> = ({ className })
             let cardY, cardX, cardRotate, cardScale, cardOpacity, cardRotateY, cardZ;
 
             if (index === 0) {
-              // Main card - goes top left with interesting angle
+              // Main card - goes top left, partially off-screen
               cardY = useTransform(
                 scrollYProgress,
                 [0, 0.1, 0.2, 0.25, 0.55, 0.68],
-                ['80vh', '30vh', '5vh', '0vh', '0vh', '-20vh']
+                ['80vh', '30vh', '5vh', '0vh', '0vh', '-35vh']
               );
               cardX = useTransform(
                 scrollYProgress,
                 [0, 0.55, 0.68],
-                ['0vw', '0vw', '-24vw']
+                ['0vw', '0vw', '-42vw']
               );
               cardRotate = useTransform(
                 scrollYProgress,
                 [0, 0.55, 0.68],
-                [0, 0, -15]
+                [0, 0, -18]
               );
               cardScale = useTransform(
                 scrollYProgress,
                 [0, 0.1, 0.2, 0.55, 0.68, 0.75],
-                [0.9, 0.95, 1, 1, 0.7, 0.6]
+                [0.9, 0.95, 1, 1, 1, 1]
               );
               cardOpacity = useTransform(
                 scrollYProgress,
@@ -156,26 +156,26 @@ export const CardStackSection: React.FC<CardStackSectionProps> = ({ className })
                 [0, 0, 100]
               );
             } else if (index === 1) {
-              // Second card - goes top right with different angle
+              // Second card - goes top right, partially off-screen
               cardY = useTransform(
                 scrollYProgress,
                 [0, 0.25, 0.35, 0.55, 0.7],
-                ['80vh', '0vh', '0vh', '0vh', '-18vh']
+                ['80vh', '0vh', '0vh', '0vh', '-25vh']
               );
               cardX = useTransform(
                 scrollYProgress,
                 [0, 0.25, 0.35, 0.55, 0.7],
-                ['0vw', '0vw', '2vw', '2vw', '28vw']
+                ['0vw', '0vw', '2vw', '2vw', '45vw']
               );
               cardRotate = useTransform(
                 scrollYProgress,
                 [0, 0.25, 0.35, 0.55, 0.7],
-                [0, 0, -10, -10, 20]
+                [0, 0, -10, -10, 25]
               );
               cardScale = useTransform(
                 scrollYProgress,
                 [0, 0.25, 0.35, 0.55, 0.7, 0.75],
-                [0.85, 0.85, 0.92, 0.92, 0.65, 0.55]
+                [0.85, 0.85, 0.92, 0.92, 0.95, 0.95]
               );
               cardOpacity = useTransform(
                 scrollYProgress,
@@ -193,26 +193,26 @@ export const CardStackSection: React.FC<CardStackSectionProps> = ({ className })
                 [0, 0, -50]
               );
             } else {
-              // Third card - goes bottom right, further away from subscribe button
+              // Third card - goes bottom right, more off-screen
               cardY = useTransform(
                 scrollYProgress,
                 [0, 0.25, 0.35, 0.55, 0.65],
-                ['80vh', '0vh', '0vh', '0vh', '28vh']
+                ['80vh', '0vh', '0vh', '0vh', '38vh']
               );
               cardX = useTransform(
                 scrollYProgress,
                 [0, 0.25, 0.35, 0.55, 0.65],
-                ['0vw', '0vw', '-1vw', '-1vw', '18vw']
+                ['0vw', '0vw', '-1vw', '-1vw', '35vw']
               );
               cardRotate = useTransform(
                 scrollYProgress,
                 [0, 0.25, 0.35, 0.55, 0.65],
-                [0, 0, 8, 8, -5]
+                [0, 0, 8, 8, -8]
               );
               cardScale = useTransform(
                 scrollYProgress,
                 [0, 0.25, 0.35, 0.55, 0.65, 0.75],
-                [0.8, 0.8, 0.88, 0.88, 0.6, 0.5]
+                [0.8, 0.8, 0.88, 0.88, 0.9, 0.9]
               );
               cardOpacity = useTransform(
                 scrollYProgress,
