@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Facebook, Linkedin, Twitter, Youtube, Tiktok, Instagram } from 'lucide-react';
+import { Facebook, Linkedin, Twitter, Youtube, Instagram } from 'lucide-react';
 
 interface FooterProps {
   className?: string;
